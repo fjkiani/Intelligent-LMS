@@ -1,0 +1,559 @@
+# Instructions
+
+During you interaction with the user, if you find anything reusable in this project (e.g. version of a library, model name), especially about a fix to a mistake you made or a correction you received, you should take note in the `Lessons` section in the `.cursorrules` file so you will not make the same mistake again. 
+
+You should also use the `.cursorrules` file as a scratchpad to organize your thoughts. Especially when you receive a new task, you should first review the content of the scratchpad, clear old different task if necessary, first explain the task, and plan the steps you need to take to complete the task. You can use todo markers to indicate the progress, e.g.
+[X] Task 1
+[ ] Task 2
+
+Also update the progress of the task in the Scratchpad when you finish a subtask.
+Especially when you finished a milestone, it will help to improve your depth of task accomplishment to use the scratchpad to reflect and plan.
+The goal is to help you maintain a big picture as well as the progress of the task. Always refer to the Scratchpad when you plan the next step.
+
+# Tools
+
+Note all the tools are in python. So in the case you need to do batch processing, you can always consult the python files and write your own script.
+
+## Screenshot Verification
+The screenshot verification workflow allows you to capture screenshots of web pages and verify their appearance using LLMs. The following tools are available:
+
+1. Screenshot Capture:
+```bash
+venv/bin/python tools/screenshot_utils.py URL [--output OUTPUT] [--width WIDTH] [--height HEIGHT]
+```
+
+2. LLM Verification with Images:
+```bash
+venv/bin/python tools/llm_api.py --prompt "Your verification question" --provider {openai|anthropic} --image path/to/screenshot.png
+```
+
+Example workflow:
+```python
+from screenshot_utils import take_screenshot_sync
+from llm_api import query_llm
+
+# Take a screenshot
+screenshot_path = take_screenshot_sync('https://example.com', 'screenshot.png')
+
+# Verify with LLM
+response = query_llm(
+    "What is the background color and title of this webpage?",
+    provider="openai",  # or "anthropic"
+    image_path=screenshot_path
+)
+print(response)
+```
+
+## LLM
+
+You always have an LLM at your side to help you with the task. For simple tasks, you could invoke the LLM by running the following command:
+```
+venv/bin/python ./tools/llm_api.py --prompt "What is the capital of France?" --provider "anthropic"
+```
+
+The LLM API supports multiple providers:
+- OpenAI (default, model: gpt-4o)
+- Azure OpenAI (model: configured via AZURE_OPENAI_MODEL_DEPLOYMENT in .env file, defaults to gpt-4o-ms)
+- DeepSeek (model: deepseek-chat)
+- Anthropic (model: claude-3-sonnet-20240229)
+- Gemini (model: gemini-pro)
+- Local LLM (model: Qwen/Qwen2.5-32B-Instruct-AWQ)
+
+But usually it's a better idea to check the content of the file and use the APIs in the `tools/llm_api.py` file to invoke the LLM if needed.
+
+## Web browser
+
+You could use the `tools/web_scraper.py` file to scrape the web.
+```
+venv/bin/python ./tools/web_scraper.py --max-concurrent 3 URL1 URL2 URL3
+```
+This will output the content of the web pages.
+
+## Search engine
+
+You could use the `tools/search_engine.py` file to search the web.
+```
+venv/bin/python ./tools/search_engine.py "your search keywords"
+```
+This will output the search results in the following format:
+```
+URL: https://example.com
+Title: This is the title of the search result
+Snippet: This is a snippet of the search result
+```
+If needed, you can further use the `web_scraper.py` file to scrape the web page content.
+
+# Lessons
+
+## User Specified Lessons
+
+- You have a python venv in ./venv. Use it.
+- Include info useful for debugging in the program output.
+- Read the file before you try to edit it.
+- Due to Cursor's limit, when you use `git` and `gh` and need to submit a multiline commit message, first write the message in a file, and then use `git commit -F <filename>` or similar command to commit. And then remove the file. Include "[Cursor] " in the commit message and PR title.
+
+## Cursor learned
+
+- For search results, ensure proper handling of different character encodings (UTF-8) for international queries
+- Add debug information to stderr while keeping the main output clean in stdout for better pipeline integration
+- When using seaborn styles in matplotlib, use 'seaborn-v0_8' instead of 'seaborn' as the style name due to recent seaborn version changes
+- Use 'gpt-4o' as the model name for OpenAI's GPT-4 with vision capabilities
+- When using f-strings with JSON templates, double the curly braces `{{` and `}}` to escape them properly and avoid format specifier errors
+- When working with experimental models like `gemini-2.0-flash-thinking-exp-01-21`, always implement fallback mechanisms to standard models in case the experimental model is unavailable
+- For options data, use RapidAPI directly instead of the YahooFinanceConnector class to avoid compatibility issues with the OptionChainQuote initialization
+- When processing options data from RapidAPI, create a mapping of strikes to straddles for easier lookup and processing of call and put data
+
+# New Implementation Notes for Unstructured Framework
+
+## Current Task
+Building an end-to-end unstructured framework for educational content processing
+
+## Project Overview
+Create a modular framework that:
+1. Ingests diverse unstructured data types (Documents, Text, Audio, Images)
+2. Processes and standardizes content through a unified pipeline
+3. Generates embeddings and metadata
+4. Stores processed content in vector database
+5. Provides LLM interface for content retrieval and interaction
+6. Implements automation for continuous processing
+
+## Implementation Progress
+
+### 1. Core Framework Components
+[X] Create base ContentProcessor abstract class
+[X] Implement PDFProcessor class
+[X] Create VectorStore class for embedding storage
+[X] Implement UnstructuredFramework core class
+[X] Create LLMInterface for query handling
+[X] Setup basic test framework
+
+### 2. Next Implementation Steps
+[ ] Complete PDF processor implementation
+  [ ] Add extract_key_concepts method
+  [ ] Add identify_sections method
+  [ ] Implement chunking strategy
+[ ] Implement text processor
+[ ] Add audio processor with transcription
+[ ] Create image processor with OCR
+[ ] Implement video processor
+
+### 3. Integration Tasks
+[ ] Connect with existing Streamlit interface
+[ ] Integrate with LLM API
+[ ] Setup proper error handling
+[ ] Add logging system
+[ ] Implement caching for performance
+
+## Implementation Details
+
+### 1. Directory Structure
+```
+final_rag_sys/
+├── processors/
+│   ├── base.py           # Base abstract processor class
+│   ├── pdf_processor.py  # PDF specific processor
+│   ├── text_processor.py # Text processor
+│   ├── audio_processor.py # Audio processor
+│   └── image_processor.py # Image processor with OCR
+├── storage/
+│   └── vector_store.py   # Vector database interface
+├── framework.py          # Main framework class
+├── llm_interface.py      # LLM query interface
+├── tests/                # Test directory
+│   └── test_framework.py # Framework tests
+└── streamlit_app.py      # Streamlit interface
+```
+
+### 2. Key Classes and Methods
+
+#### ContentProcessor (Abstract Base Class)
+- `extract_content(content)`: Extract text from various content types
+- `generate_metadata(content)`: Generate metadata from content
+- `create_embeddings(content)`: Create vector embeddings
+
+#### PDFProcessor
+- Inherits from ContentProcessor
+- Uses PyPDF2 for text extraction
+- Uses sentence-transformers for embeddings
+- Implements metadata extraction specific to PDFs
+
+#### VectorStore
+- Handles storage and retrieval of embeddings
+- Uses ChromaDB for vector storage
+- Provides search functionality
+
+#### UnstructuredFramework
+- Main orchestration class
+- Manages content processors
+- Handles the processing pipeline
+- Stores processed content in vector database
+
+#### LLMInterface
+- Provides query interface to processed content
+- Retrieves relevant content based on queries
+- Generates responses using LLM
+
+### 3. Dependencies
+- PyPDF2 for PDF processing
+- sentence-transformers for embeddings
+- chromadb for vector storage
+- pytest for testing
+- asyncio for async processing
+
+### 4. Implementation Approach
+
+1. **Phase 1: Core Components**
+   - Focus on getting the basic architecture working
+   - Implement PDF processing as first content type
+   - Setup vector storage with ChromaDB
+   - Create basic LLM interface
+
+2. **Phase 2: Additional Processors**
+   - Add text processor for plain text files
+   - Implement audio processor with transcription
+   - Add image processor with OCR
+   - Create video processor
+
+3. **Phase 3: Integration and Enhancement**
+   - Connect with Streamlit interface
+   - Implement proper error handling
+   - Add comprehensive logging
+   - Setup caching for performance
+   - Add batch processing capabilities
+
+### 5. Testing Strategy
+- Unit tests for each processor
+- Integration tests for the framework
+- Performance testing for large documents
+- End-to-end testing with Streamlit interface
+
+## Technical Challenges to Address
+
+1. **PDF Processing Improvements**
+   - Need to implement extract_key_concepts and identify_sections methods
+   - Current implementation needs to handle tables and images in PDFs
+   - Need to implement proper chunking for large documents
+
+2. **Embedding Generation**
+   - Need to select optimal embedding model
+   - Implement chunking strategy for long documents
+   - Handle multilingual content
+
+3. **Vector Storage**
+   - Ensure proper metadata serialization
+   - Implement efficient retrieval mechanisms
+   - Add caching for frequently accessed content
+
+4. **LLM Interface**
+   - Implement get_relevant_content method
+   - Create generate_response method
+   - Handle context window limitations
+
+## Next Steps
+
+1. Complete the PDF processor implementation by adding the missing methods:
+   ```python
+   def extract_key_concepts(self, text, num_concepts=5):
+       # Implementation from streamlit_pdf_processor.py
+       # with enhancements
+   
+   def identify_sections(self, text):
+       # Implementation from streamlit_pdf_processor.py
+       # with enhancements
+   ```
+
+2. Implement text processor:
+   ```python
+   class TextProcessor(ContentProcessor):
+       def __init__(self):
+           self.embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
+       
+       async def extract_content(self, text_file):
+           # Read text file
+           return text_file.read()
+       
+       # Other required methods
+   ```
+
+3. Connect with Streamlit interface:
+   - Update streamlit_pdf_processor.py to use the new framework
+   - Add support for multiple file types
+   - Create visualization for metadata and embeddings
+
+4. Add proper error handling and logging:
+   ```python
+   import logging
+   
+   logging.basicConfig(
+       level=logging.INFO,
+       format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+   )
+   
+   logger = logging.getLogger(__name__)
+   ```
+
+5. Implement caching for performance:
+   ```python
+   from functools import lru_cache
+   
+   @lru_cache(maxsize=100)
+   def get_embeddings(text):
+       # Generate embeddings
+   ```
+
+# Scratchpad
+
+## Current Task
+Enhancing Investment Analysis System with Deep Reasoning and Feedback Loop
+
+## Project Overview
+The goal is to enhance the existing investment analysis system by:
+1. Implementing a feedback loop between initial market quote analysis and deep reasoning analysis
+2. Utilizing experimental deep reasoning models for more sophisticated analysis
+3. Generating learning points to continuously improve the analysis process
+4. Creating an enhanced analysis pipeline that integrates these improvements
+5. Integrating options analysis with the enhanced analysis pipeline
+6. Building a Streamlit interface to visualize and interact with the analysis
+
+## Progress
+
+### 1. Deep Reasoning Implementation
+[X] Create deep reasoning analysis function
+  [X] Implement standard deep reasoning in `deep_reasoning_fix.py`
+  [X] Implement experimental model version in `deep_reasoning_fix_experimental.py`
+  [X] Add fallback mechanism to standard model if experimental model fails
+  [X] Create test script for deep reasoning analysis
+
+### 2. Feedback Loop Implementation
+[X] Create feedback loop system
+  [X] Implement contradiction detection between initial and deep analyses
+  [X] Create function to update initial analysis based on contradictions
+  [X] Implement learning point generation for future improvement
+  [X] Add experimental model support with fallbacks
+  [X] Fix format specifier error in JSON template
+
+### 3. Enhanced Analysis Pipeline
+[X] Create enhanced analysis pipeline
+  [X] Implement `EnhancedAnalysisPipeline` class
+  [X] Add support for feedback loop integration
+  [X] Create learning database for tracking improvements
+  [X] Implement visualization for learning trends
+  [X] Create demo script to showcase the pipeline
+
+### 4. Direct Deep Reasoning for Initial Analysis
+[X] Create enhanced initial analysis using deep reasoning model
+  [X] Implement `enhanced_initial_analysis.py` script
+  [X] Use experimental model for initial analysis with fallback
+  [X] Add comprehensive output format with support/resistance levels
+  [X] Include macroeconomic factors in analysis
+  [X] Add nuanced trading strategies for different risk profiles
+
+### 5. Options Analysis Integration
+[X] Create options enhanced analysis script
+  [X] Implement `options_enhanced_analysis.py` script
+  [X] Add deep reasoning for options analysis with experimental model
+  [X] Combine market and options analysis results
+  [X] Handle options data compatibility issues
+  [X] Add visualization for learning trends
+
+### 6. Fix Options Data Compatibility Issue
+[X] Implement direct RapidAPI integration for options data
+  [X] Create function to fetch options data from RapidAPI
+  [X] Create function to prepare options data for analysis
+  [X] Add debugging output for options data
+  [X] Implement fallback to standard analysis if options data unavailable
+  [X] Successfully test with AAPL ticker
+
+### 7. Streamlit Interface Development
+[ ] Create Streamlit interface for integrated analysis
+  [ ] Design interface layout and components
+  [ ] Implement ticker selection and analysis type options
+  [ ] Create market analysis visualization components
+  [ ] Create options analysis visualization components
+  [ ] Implement cross-validation display between market and options analysis
+  [ ] Add interactive elements for exploring different strategies
+  [ ] Create historical data visualization
+  [ ] Implement learning database visualization
+  [ ] Add user feedback collection mechanism
+
+## Streamlit Interface Plan
+
+### 1. Interface Structure
+- **Header Section**: App title, description, and navigation
+- **Input Section**: Ticker selection, analysis type, date range
+- **Market Analysis Section**: Technical indicators, sentiment, support/resistance
+- **Options Analysis Section**: IV, put-call ratio, recommended strategies
+- **Cross-Validation Section**: Confirmation/contradiction between analyses
+- **Strategy Recommendation Section**: Integrated strategy suggestions
+- **Learning Database Section**: Visualization of learning points
+- **Historical Performance Section**: Backtesting results (future)
+
+### 2. Key Components to Implement
+- Ticker input with autocomplete
+- Analysis type selection (basic, comprehensive, options-enhanced)
+- Date range selector for historical analysis
+- Technical indicator charts (price, volume, moving averages)
+- Options data visualization (IV surface, put-call ratio)
+- Strategy cards with detailed explanations
+- Cross-validation indicators (agreement/disagreement highlights)
+- Learning database trend charts
+- Feedback collection buttons
+
+### 3. Data Flow
+1. User inputs ticker and analysis parameters
+2. App fetches market data from Yahoo Finance
+3. App fetches options data from RapidAPI
+4. Enhanced analysis pipeline processes both data sources
+5. Results are displayed in respective sections
+6. Cross-validation logic highlights agreements/contradictions
+7. Strategy recommendations are generated and displayed
+8. User can provide feedback on analysis quality
+
+### 4. Technical Implementation Considerations
+- Use Streamlit caching for expensive operations
+- Implement asynchronous data fetching where possible
+- Create modular components for reusability
+- Use Plotly for interactive charts
+- Implement session state to maintain analysis between interactions
+- Add error handling for API failures
+- Implement progress indicators for long-running analyses
+
+### 5. Development Phases
+1. **Phase 1**: Basic interface with ticker selection and market analysis
+2. **Phase 2**: Add options analysis visualization
+3. **Phase 3**: Implement cross-validation and integrated strategy recommendations
+4. **Phase 4**: Add historical analysis and backtesting
+5. **Phase 5**: Implement user feedback and continuous learning
+
+## Next Steps
+[ ] Enhance the initial analysis with historical data
+  [ ] Add support for fetching historical price data
+  [ ] Implement trend analysis over different timeframes
+  [ ] Add technical indicator calculations (RSI, MACD, etc.)
+  [ ] Create visualization of historical trends
+
+[ ] Implement backtesting for strategies
+  [ ] Create backtesting framework for recommended strategies
+  [ ] Add performance metrics and visualization
+  [ ] Compare strategies generated by different models
+  [ ] Implement optimization based on historical performance
+
+## System Architecture Plan
+
+### 1. Data Ingestion Layer
+[ ] Create a unified data ingestion framework
+  [ ] Design abstract base class for API connectors
+  [ ] Implement Economic Calendar API connector
+  [ ] Implement Yahoo Finance API connector
+  [ ] Add options data fetching capabilities
+  [ ] Implement rate limiting and error handling
+
+### 2. Data Storage Layer
+[ ] Design a flexible data storage system
+  [ ] Create data models for different types of financial data
+  [ ] Implement metadata tagging system
+  [ ] Add keyword extraction and indexing
+  [ ] Design caching mechanism for API responses
+  [ ] Implement data versioning for historical analysis
+
+### 3. Agent Enhancement
+[ ] Upgrade existing agents with new capabilities
+  [ ] Add macroeconomic analysis to fundamental agents
+  [ ] Enhance sentiment agent with economic event sentiment
+  [ ] Create new options analysis agent
+  [ ] Implement market condition evaluation (overbought/oversold)
+  [ ] Add entry/exit point optimization
+
+### 4. Options Analysis Module
+[ ] Build specialized options analysis capabilities
+  [ ] Implement Black-Scholes model for options pricing
+  [ ] Create Greeks calculator (Delta, Gamma, Theta, Vega, Rho)
+  [ ] Design option chain visualization tools
+  [ ] Add implied volatility surface analysis
+  [ ] Implement options strategy evaluation
+
+### 5. Strategy Optimization
+[ ] Create a strategy optimization framework
+  [ ] Design scoring system for strategy evaluation
+  [ ] Implement backtesting for options strategies
+  [ ] Add risk-adjusted return calculations
+  [ ] Create portfolio optimization with options hedging
+  [ ] Implement strategy comparison visualization
+
+## Implementation Approach
+
+### Phase 1: Data Infrastructure
+1. First, we'll build the data ingestion and storage infrastructure:
+   - Create `src/data/connectors/` directory for API connectors
+   - Implement base connector class with common functionality
+   - Add specific connectors for each API source
+   - Design data models in `src/data/models.py`
+   - Implement metadata system in `src/data/metadata.py`
+
+2. Data models needed:
+   - EconomicEvent (date, event_name, actual, forecast, previous, impact)
+   - StockPrice (ticker, date, open, high, low, close, volume)
+   - OptionChain (ticker, expiration_date, strikes, calls, puts)
+   - OptionContract (contract_type, strike, expiration, bid, ask, volume, open_interest, greeks)
+
+### Phase 2: Options Analysis
+1. Create new modules for options analysis:
+   - `src/analysis/options.py` - Core options pricing and Greeks calculations
+   - `src/analysis/volatility.py` - Volatility analysis and surface modeling
+   - `src/analysis/strategies.py` - Options strategy evaluation
+
+2. Key functions to implement:
+   - calculate_option_price(S, K, T, r, sigma, option_type)
+   - calculate_greeks(option, underlying_price)
+   - evaluate_market_conditions(ticker, timeframe)
+   - find_optimal_entry_exit(ticker, strategy, risk_tolerance)
+
+### Phase 3: Agent Enhancement
+1. Enhance existing agents:
+   - Update `src/agents/fundamentals.py` to incorporate economic data
+   - Enhance `src/agents/sentiment.py` to analyze economic event sentiment
+   - Create new `src/agents/options_analyst.py` for options-specific analysis
+   - Update `src/agents/risk_manager.py` to handle options risk
+
+2. Create new agent:
+   - `src/agents/options_strategist.py` - Specialized in options strategies
+
+### Phase 4: Strategy Optimization
+1. Enhance backtester to support options:
+   - Update `src/backtester.py` to handle options strategies
+   - Add options-specific performance metrics
+   - Implement visualization for options strategy performance
+
+2. Create strategy optimizer:
+   - `src/optimizer.py` - Compare and rank different strategies
+   - Add risk-adjusted return calculations
+   - Implement portfolio optimization with options
+
+## Technical Considerations
+
+1. **API Rate Limits**: 
+   - Implement caching to reduce API calls
+   - Add exponential backoff for retries
+   - Consider batch requests where possible
+
+2. **Data Storage**:
+   - Use SQLite for local development
+   - Consider PostgreSQL for production
+   - Implement efficient indexing for keyword searches
+
+3. **Computational Efficiency**:
+   - Use NumPy/SciPy for options calculations
+   - Consider parallel processing for backtesting
+   - Implement lazy loading for large datasets
+
+4. **Dependencies**:
+   - yfinance for Yahoo Finance data
+   - pandas-datareader for economic data
+   - scipy for mathematical functions
+   - py_vollib for options pricing
+   - matplotlib/seaborn for visualization
+
+## Next Steps
+1. Enhance the initial analysis with historical data
+2. Integrate options analysis with deep reasoning
+3. Implement backtesting for strategies generated by the enhanced analysis pipeline

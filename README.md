@@ -1,77 +1,150 @@
 <!-- @format -->
-
-<!-- @format -->
-# Welcome to The AI Guild 🚀
-
-**This code is a part of a module in our vibrant AI community 🚀[Join the AI Guild Community](https://bit.ly/ai-guild-join), where like-minded entrepreneurs and programmers come together to build real-world AI-based solutions.**
-
-### What is The AI Guild?
-The AI Guild is a collaborative community designed for developers, tech enthusiasts, and entrepreneurs who want to **build practical AI tools** and solutions. Whether you’re just starting or looking to level up your skills, this is the place to dive deeper into AI in a supportive, hands-on environment.
-
-### Why Join Us?
-- **Collaborate with Like-Minded Builders**: Work alongside a community of individuals passionate about AI, sharing ideas and solving real-world problems together.
-- **Access to Exclusive Resources**: Gain entry to our Code & Template Vault, a collection of ready-to-use code snippets, templates, and AI projects.
-- **Guided Learning Paths**: Follow structured paths, from AI Basics for Builders to advanced classes like AI Solutions Lab, designed to help you apply your knowledge.
-- **Weekly Live Calls & Q&A**: Get direct support, feedback, and guidance during live sessions with the community.
-- **Real-World AI Projects**: Work on projects that make an impact, learn from others, and showcase your work.
-
-### Success Stories
-Here’s what some of our members are saying:
-- **"Joining The AI Guild has accelerated my learning. I’ve already built my first AI chatbot with the help of the community!"**
-- **"The live calls and feedback have been game-changers. I’ve implemented AI automation in my business, saving hours each week."**
-
-### Who is This For?
-If you’re eager to:
-- Build AI tools that solve real problems
-- Collaborate and learn from experienced AI practitioners
-- Stay up-to-date with the latest in AI development
-- Turn your coding skills into actionable solutions
-
-Then **The AI Guild** is the perfect fit for you.
-
-### Frequently Asked Questions
-- **Q: Do I need to be an expert to join?**
-  - **A:** Not at all! The AI Guild is designed for all skill levels, from beginners to advanced developers.
-- **Q: Will I get personalized support?**
-  - **A:** Yes! You’ll have access to live Q&A sessions and direct feedback on your projects.
-- **Q: What kind of projects can I work on?**
-  - **A:** You can start with small projects like chatbots and automation tools, and progress to more advanced AI solutions tailored to your interests.
-
-### How to Get Started
-Want to dive deeper and get the full experience? 🚀[Join the AI Guild Community](https://bit.ly/ai-guild-join) and unlock all the benefits of our growing community.
-
-We look forward to seeing what you’ll build with us!
 --------------------
 
 # Document Understanding and Retrieval Course
 
 Welcome to the Data Preprocessing for LLMs! This repository contains the code and resources you'll need to follow along with the course.
 
-## Overview
+# Unstructured Framework for Educational Content Processing
 
-This course is designed to teach you how to process, understand, and retrieve information from various document types using modern tools like OpenAI and Unstructured. By the end of the course, you'll be able to implement a full pipeline that processes documents, stores them in a vector database, and retrieves relevant information through queries.
+An end-to-end framework for transforming diverse unstructured educational content into AI-ready assets with rich metadata and embeddings.
 
-## Prerequisites
+## Project Overview
 
-Before you begin, ensure you have the following prerequisites installed on your machine:
+This framework transforms messy educational data into AI-ready assets by:
+- Processing diverse unstructured data types (Documents, Text, Audio, Images)
+- Generating rich metadata and embeddings
+- Storing processed content in vector databases
+- Providing an LLM interface for intelligent content retrieval
+- Implementing automation for continuous processing
 
-- Python 3.7+
-- Pip (Python package installer)
-- An OpenAI API Key
-- An Unstructured API Key and URL
+![Unstructured Framework Architecture](docs/images/unstructured_framework_architecture.png)
+![Product Framework Architecture](docs/images/product-architecture.png)
 
-## Setting Up the Project
+## Current Status
 
-### Step 1: Clone the Repository
+### ✅ Completed Components
+- Base ContentProcessor abstract class
+- PDF content processor implementation
+- Vector storage integration with ChromaDB
+- Core framework implementation
+- LLM query interface
+- Basic test framework setup
 
-Start by cloning this repository to your local machine:
+### 🚧 In Progress
+- Enhancing PDF processor with key concept extraction
+- Implementing content chunking strategies
+- Adding support for additional content types
+- Integrating with Streamlit interface
+- Setting up comprehensive logging
 
-```bash
-git clone https://github.com/pdichone/unstructured-course.git
-cd course-repo
+## Architecture
 
+The architecture follows a modular design with specialized processors for different content types, a unified processing pipeline, and integration with vector storage and LLM interfaces.
 
-##License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
 ```
+final_rag_sys/
+├── processors/           # Content type processors
+│   ├── base.py          # Abstract processor class
+│   ├── pdf_processor.py # PDF specific processor
+│   ├── text_processor.py
+│   ├── audio_processor.py
+│   └── image_processor.py
+├── storage/             # Storage implementations
+│   └── vector_store.py  # Vector database interface
+├── framework.py         # Main framework class
+├── llm_interface.py     # LLM query interface
+├── tests/              # Test directory
+└── streamlit_app.py    # Web interface
+```
+
+## Key Features
+
+### Content Processing
+- Extracts text from various content types
+- Generates metadata and embeddings
+- Implements content chunking for large documents
+- Handles multilingual content
+
+### Vector Storage
+- Stores embeddings and metadata in ChromaDB
+- Provides efficient retrieval mechanisms
+- Implements caching for frequently accessed content
+
+### LLM Interface
+- Retrieves relevant content based on queries
+- Generates contextual responses
+- Handles context window optimization
+
+## Getting Started
+
+### Prerequisites
+```bash
+# Create virtual environment
+python -m venv venv
+source venv/bin/activate  # Unix
+.\venv\Scripts\activate   # Windows
+
+# Install dependencies
+pip install -r requirements.txt
+```
+
+### Basic Usage
+```python
+from framework import UnstructuredFramework
+from processors.pdf_processor import PDFProcessor
+
+# Initialize framework
+framework = UnstructuredFramework()
+framework.register_processor("pdf", PDFProcessor())
+
+# Process a document
+with open("sample.pdf", "rb") as pdf_file:
+    result = await framework.process_content(pdf_file, "pdf")
+```
+
+## Dependencies
+- PyPDF2 for PDF processing
+- sentence-transformers for embeddings
+- chromadb for vector storage
+- pytest for testing
+- asyncio for async processing
+
+## Roadmap
+
+### Phase 1: Core Components (Current)
+- [x] Base architecture implementation
+- [x] PDF processing pipeline
+- [x] Vector storage integration
+- [ ] Enhanced metadata extraction
+- [ ] Content chunking strategies
+
+### Phase 2: Additional Processors
+- [ ] Text file processor
+- [ ] Audio transcription
+- [ ] Image OCR
+- [ ] Video processing
+
+### Phase 3: Integration & Enhancement
+- [ ] Streamlit interface
+- [ ] Comprehensive logging
+- [ ] Performance optimization
+- [ ] Batch processing
+- [ ] Automated testing
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Acknowledgments
+- Built with PyPDF2 for PDF processing
+- Uses sentence-transformers for embeddings
+- Powered by ChromaDB for vector storage
