@@ -112,3 +112,21 @@ result = collection.query(
 )
 print("\n==== Query Results ==== \n")
 pprint.pprint(json.dumps(result, indent=2))
+
+
+# 6. Unified Educational Search
+# Integration Notes:
+# Search queries are processed by both Innovate and Coactive systems
+# Results are merged with intelligent ranking algorithms
+# Filters apply across both textual and visual content
+# Search context includes educational relevance factors
+# Results include content from multiple modalities
+
+# What's Happening:
+# 1. Natural language query is processed
+# 2. Query is sent to both Innovate's vector database and Coactive
+# 3. Text-based results are retrieved from Innovate
+# 4. Visual-based results are retrieved from Coactive
+# 5. Results are merged and ranked by relevance
+# 6. Educational context influences result ranking
+# 7. Unified results present diverse content types

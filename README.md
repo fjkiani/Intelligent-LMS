@@ -148,3 +148,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Built with PyPDF2 for PDF processing
 - Uses sentence-transformers for embeddings
 - Powered by ChromaDB for vector storage
+
+
